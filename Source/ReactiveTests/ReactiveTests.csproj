@@ -8,8 +8,8 @@
     <ProjectGuid>{2C4D6AAC-D105-4263-8A00-B6F1E13BF356}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ReactiveTests.Tests</RootNamespace>
-    <AssemblyName>ReactiveTests.Tests</AssemblyName>
+    <RootNamespace>ReactiveTests</RootNamespace>
+    <AssemblyName>ReactiveTests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -58,6 +58,7 @@
     <Compile Include="IEnumerableExtensions.cs" />
     <Compile Include="ObservableFromEventPatternTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SubscribeTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
