@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReactiveTests.Tests
+namespace ReactiveTests
 {
   public static class IEnumerableExtensions
   {
