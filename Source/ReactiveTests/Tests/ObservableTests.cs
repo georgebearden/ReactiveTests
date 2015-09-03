@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
+using NUnit.Framework;
 
 namespace ReactiveTests.Tests
 {
   public class ObservableTests
   {
-    [Fact]
+    [Test]
     public void ObservableImplTest()
     {
       var observer = new Mock<IObserver<DateTime>>();
@@ -22,7 +22,7 @@ namespace ReactiveTests.Tests
       observer.Verify(obs => obs.OnNext(It.IsAny<DateTime>()), Times.AtLeastOnce());
     }
 
-    [Fact]
+    [Test]
     public void ObservableWrapperTest()
     {
       var observer = new Mock<IObserver<DateTime>>();

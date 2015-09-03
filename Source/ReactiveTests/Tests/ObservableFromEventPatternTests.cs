@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xunit;
+using NUnit.Framework;
 
 namespace ReactiveTests.Tests
 {
@@ -44,7 +44,7 @@ namespace ReactiveTests.Tests
       public double Y { get; private set;}
     }
 
-    [Fact]
+    [Test]
     public void TestObservableFromEventPattern()
     {
       var foo = new Foo();
@@ -57,15 +57,15 @@ namespace ReactiveTests.Tests
           // when foo.FooHappened is raised, this action is called with the param args.  Args is an EventPattern 
           // class that contains both the sender and the event args for the event being raised.
 
-          Assert.Equal(EventArgs.Empty, args.EventArgs);
-          Assert.ReferenceEquals(foo, args.Sender);
+          Assert.AreEqual(EventArgs.Empty, args.EventArgs);
+          Assert.AreSame(foo, args.Sender);
         });
 
       foo.RaiseFooHappened();
       disposable.Dispose();
     }
 
-    [Fact]
+    [Test]
     public void TestObservableFromEventPatternWithObjectAndString()
     {
       var foo = new Foo();
@@ -76,15 +76,15 @@ namespace ReactiveTests.Tests
           // when foo.FooHappened is raised, this action is called with the param args.  Args is an EventPattern 
           // class that contains both the sender and the event args for the event being raised.
 
-          Assert.Equal(EventArgs.Empty, args.EventArgs);
-          Assert.ReferenceEquals(foo, args.Sender);
+          Assert.AreEqual(EventArgs.Empty, args.EventArgs);
+          Assert.AreSame(foo, args.Sender);
         });
 
       foo.RaiseFooHappened();
       disposable.Dispose();
     }
 
-    [Fact]
+    [Test]
     public void TestMockMouseMoveObservableFromEventPattern()
     {
       var mouse = new Mouse();
@@ -95,7 +95,7 @@ namespace ReactiveTests.Tests
         e => mouse.PointChanged -= e)
         .Subscribe(args =>
         {
-          Assert.ReferenceEquals(mouse, args.Sender);
+          Assert.AreSame(mouse, args.Sender);
           Assert.True(args.EventArgs.X != 0 && args.EventArgs.Y != 0);
           timesEventCalled++;
         });
@@ -110,7 +110,7 @@ namespace ReactiveTests.Tests
         new PointEventArgs(2,2 )
       }.ForEach(e => mouse.RaisePointChanged(e));
 
-      Assert.Equal(4, timesEventCalled);
+      Assert.AreEqual(4, timesEventCalled);
       disposable.Dispose();
     }
   }

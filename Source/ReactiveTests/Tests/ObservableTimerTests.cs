@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using Xunit;
+using NUnit.Framework;
 
 namespace ReactiveTests.Tests
 {
@@ -32,7 +32,7 @@ namespace ReactiveTests.Tests
         });
     }
 
-    [Fact]
+    [Test]
     public void ObservableTimerCallsOnNext()
     {
       var observer = new Mock<IObserver<DateTime>>();
