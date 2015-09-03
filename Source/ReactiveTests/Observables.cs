@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text;
@@ -11,6 +12,13 @@ using System.Timers;
 
 namespace ReactiveTests
 {
+  public enum SocketStates
+  {
+    Unknown,
+    Up,
+    Down
+  }
+
   public static class Observables
   {
     public static IObservable<DateTime> CreateObservableTimer( TimeSpan interval )
@@ -57,6 +65,53 @@ namespace ReactiveTests
 
           if ( server != null )
             server.Stop();
+        } );
+      } );
+    }
+
+    public static IObservable<SocketStates> CreateSocketStateObservable( string address, int port, SocketType socketType, ProtocolType protocolType )
+    {
+      return Observable.Create<SocketStates>( observer =>
+      {
+        CancellationTokenSource cancelToken = new CancellationTokenSource();
+
+        Task.Run( async () =>
+        {
+          SocketStates lastState = SocketStates.Unknown;
+
+          while ( !cancelToken.IsCancellationRequested )
+          {
+            using ( var socket = new Socket( socketType, protocolType ) )
+            {
+              try
+              {
+                socket.Connect( address, port );
+                if ( lastState != SocketStates.Up )
+                {
+                  observer.OnNext( lastState = SocketStates.Up );
+                }
+              }
+              catch ( SocketException )
+              {
+                if ( lastState != SocketStates.Down )
+                {
+                  observer.OnNext( lastState = SocketStates.Down );
+                }
+              }
+              finally
+              {
+                socket.Close();
+              }
+            }
+
+            await Task.Delay( 1000 );
+          }
+        } );
+
+        return Disposable.Create( () =>
+        {
+          if ( !cancelToken.IsCancellationRequested )
+            cancelToken.Cancel();
         } );
       } );
     }

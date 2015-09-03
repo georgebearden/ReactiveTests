@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using System.Net;
+using System.Net.Sockets;
 
 namespace ReactiveTests.Tests
 {
@@ -65,6 +66,23 @@ namespace ReactiveTests.Tests
       httpRequest.GetResponse().GetResponseStream();
 
       httpListener.Dispose();
+    }
+
+    [Test]
+    public void CanWatchSocketState()
+    {
+      var socketStateSubscription = Observables.CreateSocketStateObservable(
+        "localhost", 5555, SocketType.Stream, ProtocolType.Tcp )
+        .Subscribe( state =>
+        {
+          Assert.AreEqual( SocketStates.Up, state );
+        } );
+
+      var tcpServer = new TcpListener( IPAddress.Parse( "127.0.0.1" ), 5555 );
+      tcpServer.Start();
+
+      tcpServer.Stop();
+      socketStateSubscription.Dispose();
     }
   }
 }
