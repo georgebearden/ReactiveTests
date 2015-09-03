@@ -32,5 +32,19 @@ namespace ReactiveTests.Tests
 
       observer.Verify(obs => obs.OnNext(It.IsAny<DateTime>()), Times.AtLeastOnce());
     }
+
+    [Test]
+    public void ObservableTimerCallsOnNext()
+    {
+      var observer = new Mock<IObserver<DateTime>>();
+
+      var timer = Observables.CreateObservableTimer( TimeSpan.FromSeconds( 1 ) );
+      using ( var _ = timer.Subscribe( observer.Object ) )
+      {
+        Thread.Sleep( TimeSpan.FromSeconds( 2 ) );
+      }
+
+      observer.Verify( obs => obs.OnNext( It.IsAny<DateTime>() ), Times.AtLeastOnce() );
+    }
   }
 }

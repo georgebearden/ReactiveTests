@@ -74,14 +74,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Framework\ObservableTimer.cs" />
+    <Compile Include="Observables.cs" />
     <Compile Include="IEnumerableExtensions.cs" />
     <Compile Include="ObservableImpl.cs" />
     <Compile Include="ObservableWrapper.cs" />
     <Compile Include="Tests\ObservableFromEventPatternTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\ObservableTests.cs" />
-    <Compile Include="Tests\ObservableTimerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
