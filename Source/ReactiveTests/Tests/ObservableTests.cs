@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using System.Net;
 
 namespace ReactiveTests.Tests
 {
@@ -45,6 +46,25 @@ namespace ReactiveTests.Tests
       }
 
       observer.Verify( obs => obs.OnNext( It.IsAny<DateTime>() ), Times.AtLeastOnce() );
+    }
+
+    [Test]
+    public void CanConnectToObservableHttpListener()
+    {
+      string uri = @"http://localhost:8080/";
+      var mutex = new Mutex();
+
+      var httpListener = Observables.CreateObservableHttpListener( uri )
+        .Subscribe( request =>
+        {
+          Assert.NotNull( request );
+          request.Response.Close();
+        } );
+
+      var httpRequest = (HttpWebRequest)WebRequest.Create( uri );
+      httpRequest.GetResponse().GetResponseStream();
+
+      httpListener.Dispose();
     }
   }
 }
