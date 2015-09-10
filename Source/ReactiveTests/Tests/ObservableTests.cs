@@ -8,11 +8,65 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using System.Net;
 using System.Net.Sockets;
+using System.Reactive.Linq;
+using System.Reactive.Disposables;
 
 namespace ReactiveTests.Tests
 {
   public class ObservableTests
   {
+    [Test]
+    public void ObservableCreateIsLazy()
+    {
+      int observableInstanceCount = 0;
+
+      var observable = Observable.Create<DateTime>( async observer =>
+      {
+        observableInstanceCount++;
+        bool isRunning = true;
+
+        while ( isRunning )
+        {
+          observer.OnNext( DateTime.Now );
+          await Task.Delay( 100 );
+        }
+
+        return Disposable.Create( () => isRunning = false );
+      } );
+
+      // observableInstanceCount should not have been incremented as nothing has subscribed yet
+      Assert.AreEqual( 0, observableInstanceCount );
+
+      var subscription = observable.Subscribe( _ => { } );
+      Assert.AreEqual( 1, observableInstanceCount );
+    }
+
+    [Test]
+    public void DoesObservableCreateReturnsSameInstance()
+    {
+      int observableInstanceCount = 0;
+
+      var observable = Observable.Create<DateTime>( async observer =>
+        {
+          observableInstanceCount++;
+          bool isRunning = true;
+
+          while (isRunning)
+          {
+            observer.OnNext( DateTime.Now );
+            await Task.Delay( 100 );
+          }
+
+          return Disposable.Create( () => isRunning = false );
+        } );
+
+      var subscription1 = observable.Subscribe( _ => { } );
+      Assert.AreEqual( 1, observableInstanceCount );
+
+      var subscription2 = observable.Subscribe( _ => { } );
+      Assert.AreEqual( 2, observableInstanceCount );
+    }
+
     [Test]
     public void ObservableImplTest()
     {
