@@ -10,11 +10,56 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reactive.Linq;
 using System.Reactive.Disposables;
+using System.Reactive.Subjects;
 
 namespace ReactiveTests.Tests
 {
   public class ObservableTests
   {
+    public class SingletonObservable : IObservable<DateTime>, IDisposable
+    {
+      private readonly Subject<DateTime> _subject = new Subject<DateTime>();
+      private bool _isRunning = true;
+
+      public SingletonObservable()
+      {
+        InstanceCount++;
+
+        Task.Run( async () =>
+        {
+          while ( _isRunning )
+          {
+            _subject.OnNext( DateTime.Now );
+            await Task.Delay( 100 );
+          }
+        } );
+      }
+
+      public void Dispose()
+      {
+        _isRunning = false;
+      }
+
+      public IDisposable Subscribe( IObserver<DateTime> observer )
+      {
+        return _subject.Subscribe( observer );
+      }
+
+      public static int InstanceCount { get; private set; }
+    }
+
+    [Test]
+    public void HowToReturnSameObservableImplOnSubscribe()
+    {
+      var singletonObservable = new SingletonObservable();
+
+      var subscription1 = singletonObservable.Subscribe( _ => { } );
+      Assert.AreEqual( 1, SingletonObservable.InstanceCount );
+
+      var subscription2 = singletonObservable.Subscribe( _ => { } );
+      Assert.AreEqual( 1, SingletonObservable.InstanceCount );
+    }
+
     [Test]
     public void ObservableCreateIsLazy()
     {
