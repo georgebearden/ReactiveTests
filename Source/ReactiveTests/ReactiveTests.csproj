@@ -74,11 +74,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HttpServer.cs" />
     <Compile Include="SingletonObservable.cs" />
     <Compile Include="Observables.cs" />
     <Compile Include="IEnumerableExtensions.cs" />
     <Compile Include="ObservableImpl.cs" />
     <Compile Include="ObservableWrapper.cs" />
+    <Compile Include="Tests\HttpServerTests.cs" />
     <Compile Include="Tests\ObservableFromEventPatternTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\ObservableTests.cs" />
