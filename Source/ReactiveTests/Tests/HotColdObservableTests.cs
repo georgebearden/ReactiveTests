@@ -20,7 +20,6 @@ namespace ReactiveTests.Tests
       var coldObservable = Observable.Create<Unit>(_ =>
       {
         creationCount++;
-
         return Disposable.Empty;
       });
 
@@ -42,7 +41,6 @@ namespace ReactiveTests.Tests
       var coldObservable = Observable.Create<Unit>(_ =>
       {
         creationCount++;
-
         return Disposable.Empty;
       });
 
@@ -54,6 +52,40 @@ namespace ReactiveTests.Tests
 
       hotObservable.Subscribe(_ => { }).Dispose();
       Assert.AreEqual(1, creationCount);
+    }
+
+    [Test]
+    public void ObservableCreateIsLazy()
+    {
+      var isCreated = false;
+      var coldObservable = Observable.Create<Unit>(_ =>
+      {
+        isCreated = true;
+        return Disposable.Empty;
+      });
+
+      Assert.False(isCreated);
+    }
+
+    [Test]
+    public void CallingConnectOnConnectableObservableCreatesTheObservableSequence()
+    {
+      var isCreated = false;
+      var coldObservable = Observable.Create<Unit>(_ =>
+      {
+        isCreated = true;
+        return Disposable.Empty;
+      });
+      // Observable.Create should be lazy
+      Assert.False(isCreated);
+
+      var hotObservable = coldObservable.Publish();
+      // Publish makes the observable sequence share the subscription but still does not instantiate it
+      Assert.False(isCreated);
+
+      var hotDisposable = hotObservable.Connect();
+      // Connect actually instantiates the subscription.
+      Assert.True(isCreated);
     }
   }
 }
