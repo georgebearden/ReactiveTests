@@ -80,6 +80,7 @@
     <Compile Include="IEnumerableExtensions.cs" />
     <Compile Include="ObservableImpl.cs" />
     <Compile Include="ObservableWrapper.cs" />
+    <Compile Include="Tests\HotColdObservableTests.cs" />
     <Compile Include="Tests\HttpServerTests.cs" />
     <Compile Include="Tests\ObservableFromEventPatternTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
