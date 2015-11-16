@@ -3,6 +3,7 @@ using System;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Threading;
 
 namespace ReactiveTests.Tests
 {
@@ -86,6 +87,31 @@ namespace ReactiveTests.Tests
       var hotDisposable = hotObservable.Connect();
       // Connect actually instantiates the subscription.
       Assert.True(isCreated);
+    }
+
+    [Test]
+    public void DisposingAConnectableDisposableDisconnectsTheSequence()
+    {
+      var coldInterval = Observable.Interval(TimeSpan.FromMilliseconds(10));
+      var hotInterval = coldInterval.Publish();
+      var hotConnection = hotInterval.Connect();
+
+      var onNextWasCalled = false;
+      var subscription = hotInterval.Subscribe(_ => onNextWasCalled = true );
+      Thread.Sleep(100);
+      subscription.Dispose();
+      Assert.True(onNextWasCalled);
+
+      // Now disconnect the observable so it stops publishing
+      hotConnection.Dispose();
+
+      onNextWasCalled = false;
+      subscription = hotInterval.Subscribe(_ => onNextWasCalled = true );
+
+      Thread.Sleep(100);
+      subscription.Dispose();
+      // Calling subscribe on a disconnected hot observable should do nothing
+      Assert.False(onNextWasCalled);
     }
   }
 }
